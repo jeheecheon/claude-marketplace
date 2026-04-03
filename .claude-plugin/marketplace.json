@@ -8,19 +8,14 @@
   },
   "plugins": [
     {
-      "name": "anki-voca",
-      "source": "./plugins/anki-voca",
-      "description": "Anki vocabulary card creator for English learners"
+      "name": "anki",
+      "source": "./plugins/anki",
+      "description": "Anki flashcard creators for vocabulary and CS concepts"
     },
     {
-      "name": "anki-cs",
-      "source": "./plugins/anki-cs",
-      "description": "Anki CS concept card creator for interview prep"
-    },
-    {
-      "name": "commit",
-      "source": "./plugins/commit",
-      "description": "Git commit with conventional message format"
+      "name": "git",
+      "source": "./plugins/git",
+      "description": "Git workflow utilities"
     }
   ]
 }

@@ -1,8 +1,0 @@
-{
-  "name": "commit",
-  "description": "Git commit with conventional message format",
-  "version": "1.0.0",
-  "author": {
-    "name": "jeheecheon"
-  }
-}

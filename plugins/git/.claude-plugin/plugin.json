@@ -1,0 +1,8 @@
+{
+  "name": "git",
+  "description": "Git workflow utilities",
+  "version": "1.0.0",
+  "author": {
+    "name": "jeheecheon"
+  }
+}
