@@ -1,0 +1,26 @@
+{
+  "name": "jeheecheon",
+  "owner": {
+    "name": "jeheecheon"
+  },
+  "metadata": {
+    "description": "Personal Claude Code commands by jeheecheon"
+  },
+  "plugins": [
+    {
+      "name": "anki-voca",
+      "source": "./plugins/anki-voca",
+      "description": "Anki vocabulary card creator for English learners"
+    },
+    {
+      "name": "anki-cs",
+      "source": "./plugins/anki-cs",
+      "description": "Anki CS concept card creator for interview prep"
+    },
+    {
+      "name": "commit",
+      "source": "./plugins/commit",
+      "description": "Git commit with conventional message format"
+    }
+  ]
+}
