@@ -6,6 +6,8 @@ Create a GitHub issue based on user input or current branch changes.
 
 # Decision Tree
 
+> **Rule: Follow every step of the decision tree in order. Do not skip or reorder steps unless the user explicitly instructs otherwise.**
+
 ```
 START
 │

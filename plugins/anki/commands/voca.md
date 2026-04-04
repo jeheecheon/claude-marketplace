@@ -9,6 +9,8 @@ Create Anki vocabulary cards from English words provided by the user.
 
 # Decision Tree
 
+> **Rule: Follow every step of the decision tree in order. Do not skip or reorder steps unless the user explicitly instructs otherwise.**
+
 ```
 START
 │

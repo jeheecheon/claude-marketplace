@@ -7,6 +7,8 @@ Create a git commit for staged changes, split by feature unit (one feature/task 
 
 # Decision Tree
 
+> **Rule: Follow every step of the decision tree in order. Do not skip or reorder steps unless the user explicitly instructs otherwise.**
+
 ```
 START
 │
