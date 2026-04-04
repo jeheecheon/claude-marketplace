@@ -13,55 +13,69 @@ Create Anki computer science flashcards optimized for technical interview prepar
 ```
 START
 │
-├─ Anki MCP available? (try any Anki MCP call, e.g. modelNames)
+├─ Anki MCP configured? (check if anki MCP tools are present)
+│  ├─ NO → [A0] → STOP
+│  └─ YES → next check
+│
+├─ Anki MCP reachable? (try any Anki MCP call, e.g. modelNames)
 │  ├─ YES → next check
-│  └─ NO → [A0] → STOP (cannot proceed without MCP)
+│  └─ NO → [A1] → STOP
 │
 ├─ Deck "Computer Science" exists? (deckActions → listDecks)
 │  ├─ YES → next check
-│  └─ NO → [A1] → next check
+│  └─ NO → [A2] → next check
 │
 ├─ Note type "Concept" exists? (modelNames)
 │  ├─ YES → verify 9 fields (modelFieldNames) → begin topics
-│  └─ NO → [A2] → begin topics
+│  └─ NO → [A3] → begin topics
 │
 ├─ For each topic:
 │  │
-│  ├─ [A3] Duplicate?
+│  ├─ [A4] Duplicate?
 │  │  ├─ YES → skip, mark "duplicate" → next topic
 │  │  └─ NO → continue
 │  │
-│  ├─ [A4] Create note
+│  ├─ [A5] Create note
 │  │  ├─ OK → save note ID → next topic
 │  │  └─ FAIL → mark "error" → next topic
 │  │
 │  └─ next topic
 │
-└─ [A5] Report
+└─ [A6] Report
 ```
 
 # Actions
 
-## A0. Anki MCP Not Available
+## A0. Anki MCP Not Configured
 
-When the Anki MCP server is unreachable, instruct the user to:
+The **`anki`** MCP server is not installed. Run the following via Bash tool:
+
+```bash
+claude mcp add anki -- npx -y @alexanderadam/mcp-ankiconnect
+```
+
+Then tell the user: **"Please type `/reload-plugins` to activate the MCP, then retry."** **STOP — cannot proceed until MCP is loaded.**
+
+## A1. Anki MCP Connection Failed
+
+The `anki` MCP server is registered but cannot reach Anki. Instruct the user to:
 
 1. **Verify Anki is running** — the Anki app must be open.
 2. **Install AnkiConnect addon**:
    - Open Anki → **Tools → Add-ons → Get Add-ons...**
    - Enter code: `2055492159`
    - Click **OK** → **Restart Anki**
-3. **Check MCP server config** — ensure the Anki MCP server is registered in Claude Code's MCP settings.
+3. **Confirm AnkiConnect is active** — visit `http://localhost:8765` in a browser; it should return a response.
 
-Ask the user to retry after completing the steps above. **STOP after this action — cannot proceed without MCP.**
+Ask the user to retry after completing the steps above. **STOP — cannot proceed without MCP.**
 
-## A1. Create Deck
+## A2. Create Deck
 
 ```
 deckActions → createDeck, deckName: "Computer Science"
 ```
 
-## A2. Create Note Type
+## A3. Create Note Type
 
 If the note type does not exist, create it via `createModel` with the specification below.
 
@@ -110,7 +124,7 @@ Each section must display a visible header/title so the user can identify each s
 - **Fonts** — Korean text: Pretendard / Noto Sans KR. Code: JetBrains Mono / Fira Code.
 - **Code blocks** — distinct background from body, monospace font, `overflow-x: auto`.
 
-## A3. Check Duplicate
+## A4. Check Duplicate
 
 ```
 findNotes → query: "\"deck:Computer Science\" {topic-specific query}"
@@ -118,7 +132,7 @@ findNotes → query: "\"deck:Computer Science\" {topic-specific query}"
 
 **NOTE:** Anki search syntax requires quotes (not backslash escaping) for deck names with spaces. Use `"deck:Computer Science"`, NOT `deck:Computer\ Science`.
 
-## A4. Create Note
+## A5. Create Note
 
 ```
 addNotes → deckName: "Computer Science", modelName: "Concept",
@@ -173,7 +187,7 @@ addNotes → deckName: "Computer Science", modelName: "Concept",
 - Anticipate what an interviewer would ask NEXT based on Interview Answer. Include a brief answer.
 - For algorithms: edge cases (off-by-one, overflow, empty input), pattern variations, complexity proofs, etc.
 
-## A5. Report
+## A6. Report
 
 Show summary table:
 

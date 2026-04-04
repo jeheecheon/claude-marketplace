@@ -12,60 +12,74 @@ Create Anki vocabulary cards from English words provided by the user.
 ```
 START
 │
-├─ Anki MCP available? (try any Anki MCP call, e.g. modelNames)
+├─ Anki MCP configured? (check if anki MCP tools are present)
+│  ├─ NO → [A0] → STOP
+│  └─ YES → next check
+│
+├─ Anki MCP reachable? (try any Anki MCP call, e.g. modelNames)
 │  ├─ YES → next check
-│  └─ NO → [A0] → STOP (cannot proceed without MCP)
+│  └─ NO → [A1] → STOP
 │
 ├─ Deck "Vocabulary" exists? (deckActions → listDecks)
 │  ├─ YES → next check
-│  └─ NO → [A1] → next check
+│  └─ NO → [A2] → next check
 │
 ├─ Note type "Vocabulary" exists? (modelNames)
 │  ├─ YES → verify 12 fields (modelFieldNames) → begin words
-│  └─ NO → [A2] → begin words
+│  └─ NO → [A3] → begin words
 │
 ├─ For each word:
 │  │
-│  ├─ [A3] Duplicate?
+│  ├─ [A4] Duplicate?
 │  │  ├─ YES → skip, mark "duplicate" → next word
 │  │  └─ NO → continue
 │  │
-│  ├─ [A4] Create note
+│  ├─ [A5] Create note
 │  │  ├─ OK → save note ID → continue
 │  │  └─ FAIL → mark "error" → next word
 │  │
-│  ├─ [A5] Generate & attach audio
+│  ├─ [A6] Generate & attach audio
 │  │  ├─ Word audio failed → mark "no word audio", continue
 │  │  ├─ Sentence audio failed → mark "no sentence audio", continue
 │  │  └─ OK → continue
 │  │
 │  └─ next word
 │
-└─ [A6] Report
+└─ [A7] Report
 ```
 
 # Actions
 
-## A0. Anki MCP Not Available
+## A0. Anki MCP Not Configured
 
-Unable to connect to the Anki MCP server. Guide the user through the following:
+The **`anki`** MCP server is not installed. Run the following via Bash tool:
+
+```bash
+claude mcp add anki -- npx -y @alexanderadam/mcp-ankiconnect
+```
+
+Then tell the user: **"Please type `/reload-plugins` to activate the MCP, then retry."** **STOP — cannot proceed until MCP is loaded.**
+
+## A1. Anki MCP Connection Failed
+
+The `anki` MCP server is registered but cannot reach Anki. Guide the user through the following:
 
 1. **Verify Anki is running** — The Anki app must be open.
 2. **Install the AnkiConnect add-on** — An add-on that connects Anki with external programs.
    - Open Anki → **Tools → Add-ons → Get Add-ons...**
    - Enter code: `2055492159`
    - Click **OK** → **Restart Anki**
-3. **Check MCP server configuration** — Verify that the Anki MCP server is registered in Claude Code's MCP settings.
+3. **Confirm AnkiConnect is active** — visit `http://localhost:8765` in a browser; it should return a response.
 
-Guide the user to retry after completing the steps above. **STOP after this action — cannot proceed without MCP.**
+Guide the user to retry after completing the steps above. **STOP — cannot proceed without MCP.**
 
-## A1. Create Deck
+## A2. Create Deck
 
 ```
 deckActions → createDeck, deckName: "Vocabulary"
 ```
 
-## A2. Create Note Type
+## A3. Create Note Type
 
 Create via `createModel` with the specification below.
 
@@ -83,8 +97,8 @@ Create via `createModel` with the specification below.
 | 8 | `Collocations` | 2-3 common collocations separated by ` · `. | `deliberate decision · deliberate attempt` |
 | 9 | `WordFamily` | Related word forms. Empty if no useful forms exist. | `n. deliberation · adv. deliberately` |
 | 10 | `Examples` | Exactly 3 example sentences. Wrap target word in `<b>` tags. Separate with `<br>`. | `The damage was not <b>deliberate</b>.<br>...` |
-| 11 | `Audio` | Word pronunciation. Left empty at creation; set in A5. | |
-| 12 | `SentenceAudio` | Full sentence audio. Left empty at creation; set in A5. | |
+| 11 | `Audio` | Word pronunciation. Left empty at creation; set in A6. | |
+| 12 | `SentenceAudio` | Full sentence audio. Left empty at creation; set in A6. | |
 
 ### Card Template Structure
 
@@ -110,7 +124,7 @@ Each section (9–12) must display a visible header/title (e.g. "Confusable", "C
 
 **Styling is NOT specified here.** The agent creating the note type should design clean, readable card styling with good visual hierarchy at its own discretion. Key constraint: text must have sufficient contrast against the background — no text should blend into or be hard to read against its background color.
 
-## A3. Check Duplicate
+## A4. Check Duplicate
 
 ```
 findNotes → query: "deck:Vocabulary TargetWord:{word}"
@@ -118,7 +132,7 @@ findNotes → query: "deck:Vocabulary TargetWord:{word}"
 
 - Returns note IDs → count > 0 means duplicate.
 
-## A4. Create Note
+## A5. Create Note
 
 ```
 addNotes → deckName: "Vocabulary", modelName: "Vocabulary",
@@ -127,7 +141,7 @@ addNotes → deckName: "Vocabulary", modelName: "Vocabulary",
 
 - Fill all fields EXCEPT Audio, SentenceAudio (leave empty).
 - Tags: `voca` + headword (lowercase, hyphenated if multi-word).
-- Save returned note ID for A5.
+- Save returned note ID for A6.
 
 ### Quality guidelines for field content
 
@@ -146,7 +160,7 @@ addNotes → deckName: "Vocabulary", modelName: "Vocabulary",
 - WordFamily: only genuinely different/useful forms.
 - Pronunciation: IPA with slashes.
 
-## A5. Generate & Attach Audio
+## A6. Generate & Attach Audio
 
 **IMPORTANT:** `updateNoteFields` audio parameter only supports `"url"` (HTTP), NOT local file paths. Use `mediaActions → storeMediaFile` to store local files first.
 
@@ -170,7 +184,7 @@ python3 -m edge_tts --voice en-US-AriaNeural --text "{full_sentence_with_word_fi
 {"note": {"id": <note_id>, "fields": {"Audio": "[sound:pronunciation_{word}_en.mp3]", "SentenceAudio": "[sound:sentence_{word}_en.mp3]"}}}
 ```
 
-## A6. Report
+## A7. Report
 
 Show summary table:
 
