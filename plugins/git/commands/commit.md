@@ -4,10 +4,9 @@ Create a git commit for staged changes, split by feature unit (one feature/task 
 
 - Rule: **1 feature/task = 1 commit. No exceptions.**
 - Rule: **NEVER include `Co-Authored-By` or any AI attribution. Leave no trace of AI assistance in commits — no AI-related tags, footers, or metadata.**
+- Rule: **Follow every step of the decision tree in order. Do not skip or reorder steps unless the user explicitly instructs otherwise.**
 
 # Decision Tree
-
-> **Rule: Follow every step of the decision tree in order. Do not skip or reorder steps unless the user explicitly instructs otherwise.**
 
 ```
 START

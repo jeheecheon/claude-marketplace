@@ -7,10 +7,9 @@ Create Anki computer science flashcards optimized for technical interview prepar
 - Deck: **Computer Science**
 - Note Type: **Concept** — single unified type for all CS topics (concepts, algorithms, system design, principles, data structures, etc.)
 - Rule: **1 topic = 1 note = 1 card. No exceptions.**
+- Rule: **Follow every step of the decision tree in order. Do not skip or reorder steps unless the user explicitly instructs otherwise.**
 
 # Decision Tree
-
-> **Rule: Follow every step of the decision tree in order. Do not skip or reorder steps unless the user explicitly instructs otherwise.**
 
 ```
 START

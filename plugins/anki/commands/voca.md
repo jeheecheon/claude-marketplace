@@ -6,10 +6,9 @@ Create Anki vocabulary cards from English words provided by the user.
 - Deck: **Vocabulary**
 - Note Type: **Vocabulary** (standard, non-cloze, 1 card template)
 - Rule: **1 word = 1 note = 1 card. No exceptions.**
+- Rule: **Follow every step of the decision tree in order. Do not skip or reorder steps unless the user explicitly instructs otherwise.**
 
 # Decision Tree
-
-> **Rule: Follow every step of the decision tree in order. Do not skip or reorder steps unless the user explicitly instructs otherwise.**
 
 ```
 START
