@@ -35,19 +35,14 @@ START
 │  ├─ All changes belong to one feature/task → [A5]
 │  └─ Changes span multiple features/tasks → STOP
 │
-├─ [A5] Draft commit message
-│  └─ Show drafted message to user → [A6]
+├─ [A5] Draft commit message → [A6]
 │
-├─ [A6] Confirm with user
-│  ├─ User approves → [A7]
-│  └─ User requests changes → revise message → [A6]
-│
-├─ [A7] Create commit
+├─ [A6] Create commit
 │  │  Run: git commit -m "<message>"
-│  ├─ OK → [A8]
+│  ├─ OK → [A7]
 │  └─ FAIL → show error, diagnose cause → STOP
 │
-└─ [A8] Report
+└─ [A7] Report
      Run: git log --oneline -1
      Show output, confirm commit created successfully → END
 ```
@@ -116,25 +111,18 @@ Draft a commit message applying the convention from A3:
 - Summary must accurately describe "what changed" in the convention's style.
 - Follow all aspects detected in A3 (scope, separator, casing, tense, length).
 
-Show the drafted message to the user.
+**Do not ask the user for confirmation unless explicitly instructed to do so. Proceed directly to A6.**
 
-## A6. Confirm with User
-
-Wait for the user's response.
-
-- If **user approves** → continue to A7.
-- If **user requests changes** → revise the message and show again. Repeat until approved.
-
-## A7. Create Commit
+## A6. Create Commit
 
 ```bash
 git commit -m "<message>"
 ```
 
-- If commit **succeeds** → continue to A8.
+- If commit **succeeds** → continue to A7.
 - If commit **fails** (e.g. pre-commit hook) → show the error output, diagnose the cause, and **STOP.**
 
-## A8. Report
+## A7. Report
 
 ```bash
 git log --oneline -1
