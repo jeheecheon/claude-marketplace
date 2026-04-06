@@ -37,7 +37,9 @@ START
 │
 ├─ [A5] Check for existing release
 │  │  Run: gh release view <tag>
-│  ├─ Release exists → inform user, ask whether to overwrite → STOP or [A7]
+│  ├─ Release exists → inform user, ask whether to overwrite
+│  │  ├─ User says yes → delete existing release → [A7]
+│  │  └─ User says no → STOP
 │  └─ No release → [A6]
 │
 ├─ [A6] Fetch existing releases
@@ -108,7 +110,7 @@ Read the output.
 ## A3. Detect Previous Tag
 
 ```bash
-git tag --sort=-creatordate
+git tag --sort=-creatordate | head -10
 ```
 
 Read the output. Find the tag immediately before the target tag in chronological order.
@@ -137,7 +139,9 @@ Save all outputs. These are the foundation for categorizing changes in A8 and dr
 gh release view <tag>
 ```
 
-- If a **release already exists** for this tag → inform the user. Ask whether to overwrite. If yes, proceed to A7 (will use `--latest` flag to update). If no, **STOP.**
+- If a **release already exists** for this tag → inform the user. Ask whether to overwrite.
+  - If **yes** → delete the existing release with `gh release delete <tag> -y`, then skip to A7.
+  - If **no** → **STOP.**
 - If **no release exists** → continue to A6.
 
 ## A6. Fetch Existing Releases
@@ -174,7 +178,7 @@ Decision:
 - **≥ 3 releases, consistent convention detected** → extract the full pattern. Save it for A9.
 - **≥ 3 releases, no consistent convention** OR **< 3 releases** → save the default convention for A9:
   - Title: tag name only (e.g. `v1.3.0`)
-  - Body language: English
+  - Body language: Korean
   - Body structure:
     ```
     ## What's Changed
