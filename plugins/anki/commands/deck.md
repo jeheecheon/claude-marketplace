@@ -78,13 +78,13 @@ Check if the file `~/.claude/commands/anki:{command-name}.md` already exists usi
 
 ## A3. Fetch Template
 
-Fetch the template from GitHub using the WebFetch tool:
+Fetch the template from GitHub via Bash:
 
-```
-https://raw.githubusercontent.com/jeheecheon/claude-marketplace/main/plugins/anki/new-deck-template.md
+```bash
+curl -sL "https://raw.githubusercontent.com/jeheecheon/claude-marketplace/main/plugins/anki/new-deck-template.md"
 ```
 
-This URL always points to the latest version of the template on the `main` branch.
+Use the output as the template content. This URL always points to the latest version on the `main` branch.
 
 ## A4. Fill Template
 
