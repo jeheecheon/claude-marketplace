@@ -2,7 +2,7 @@ Create a new Anki deck command file so the user can add cards to a custom deck v
 
 # Context
 
-- Purpose: Generate a new command file under `~/.claude/commands/` (user-scope) based on `new-deck-template.md`
+- Purpose: Generate a new command file under `~/.claude/commands/` (user-scope) by fetching `new-deck-template.md` from GitHub
 - File naming: `~/.claude/commands/anki:{command-name}.md` — the `anki:` prefix in the filename makes the command callable as `/anki:{command-name}` in Claude Code.
 - After this command runs, the user can invoke `/anki:{command-name}` to add cards to the new deck.
 - Rule: **Follow every step of the decision tree in order. Do not skip or reorder steps unless the user explicitly instructs otherwise.**
@@ -25,8 +25,8 @@ START
 │  ├─ YES → tell user the command already exists → STOP
 │  └─ NO → next
 │
-├─ [A3] Read template
-│  │  Read: ../new-deck-template.md (relative to this command file's directory, i.e. plugins/anki/new-deck-template.md)
+├─ [A3] Fetch template
+│  │  Fetch: https://raw.githubusercontent.com/jeheecheon/claude-marketplace/main/plugins/anki/new-deck-template.md
 │  └─ next
 │
 ├─ [A4] Fill template
@@ -76,9 +76,15 @@ Check if the file `~/.claude/commands/anki:{command-name}.md` already exists usi
 - If it exists (Glob returns a match, or Read returns file content): tell the user **"The command `/anki:{command-name}` already exists. Use it directly or delete the file to recreate."** → **STOP**
 - If it does not exist (Glob returns empty list, or Read returns an error): proceed.
 
-## A3. Read Template
+## A3. Fetch Template
 
-Read the file `../new-deck-template.md (relative to this command file's directory, i.e. plugins/anki/new-deck-template.md)` (one level up from commands/) to get the template content.
+Fetch the template from GitHub using the WebFetch tool:
+
+```
+https://raw.githubusercontent.com/jeheecheon/claude-marketplace/main/plugins/anki/new-deck-template.md
+```
+
+This URL always points to the latest version of the template on the `main` branch.
 
 ## A4. Fill Template
 
