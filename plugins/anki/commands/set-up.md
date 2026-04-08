@@ -1,8 +1,8 @@
-Set up Anki for use with all `/anki:*` commands. Configures the MCP server, verifies AnkiConnect, creates required decks and note types, and recommends optimal Anki study settings.
+Set up Anki for use with all `/anki:*` commands. Configures the MCP server, verifies AnkiConnect, installs dependencies, and recommends optimal Anki study settings.
 
 # Context
 
-- Purpose: One-time setup that prepares Anki so that `/anki:cs`, `/anki:voca`, `/anki:deck`, and any deck-based commands work immediately after.
+- Purpose: One-time setup that prepares Anki's MCP connection and dependencies so that `/anki:cs`, `/anki:voca`, `/anki:deck`, and any deck-based commands work immediately after. Decks and note types are created on demand by each individual command.
 - Rule: **Follow every step of the decision tree in order. Do not skip or reorder steps unless the user explicitly instructs otherwise.**
 
 # Decision Tree
@@ -18,39 +18,13 @@ START
 │  ├─ YES → next check
 │  └─ NO → [A1] → STOP
 │
-├─ Deck "Computer Science" exists? (deckActions → listDecks)
-│  ├─ YES → next check
-│  └─ NO → [A2a] create it → next check
-│
-├─ Deck "Vocabulary" exists? (check listDecks result)
-│  ├─ YES → next check
-│  └─ NO → [A2b] create it → next check
-│
-├─ Note type "Concept" exists? (modelNames)
-│  ├─ YES → verify 9 fields (modelFieldNames)
-│  │  ├─ Fields match → next check
-│  │  └─ Fields mismatch → [A4] warn user → next check
-│  └─ NO → [A3a] create it → next check
-│
-├─ Note type "Vocabulary" exists? (modelNames)
-│  ├─ YES → verify 12 fields (modelFieldNames)
-│  │  ├─ Fields match → next check
-│  │  └─ Fields mismatch → [A4] warn user → next check
-│  └─ NO → [A3b] create it → next check
-│
-├─ Note type "StudyCard" exists? (modelNames)
-│  ├─ YES → verify 7 fields (modelFieldNames)
-│  │  ├─ Fields match → next check
-│  │  └─ Fields mismatch → [A4] warn user → next check
-│  └─ NO → [A3c] create it → next check
-│
 ├─ edge-tts installed? (python3 -m edge_tts --help)
 │  ├─ YES → next
-│  └─ NO → [A5] install it
+│  └─ NO → [A2] install it
 │     ├─ OK → next
 │     └─ FAIL → warn user, mark ❌ → next
 │
-└─ [A6] Report — show setup summary and optimal study settings
+└─ [A3] Report — show setup summary and optimal study settings
 ```
 
 # Actions
@@ -87,188 +61,7 @@ The `anki` MCP server is registered but cannot reach Anki. Guide the user:
 
 **STOP — cannot proceed without connection.**
 
-## A2a. Create Deck "Computer Science"
-
-```
-deckActions → createDeck, deckName: "Computer Science"
-```
-
-Used by `/anki:cs`.
-
-## A2b. Create Deck "Vocabulary"
-
-```
-deckActions → createDeck, deckName: "Vocabulary"
-```
-
-Used by `/anki:voca`.
-
-## A3a. Create Note Type "Concept"
-
-Create via `createModel` with the specification below. Used by `/anki:cs`.
-
-**Fields (9, in order):**
-
-| # | Field | Description |
-|---|---|---|
-| 1 | `Question` | Interview-style question |
-| 2 | `Interview Answer` | Conversational model answer, 3-5 sentences |
-| 3 | `Key Concept` | Precise technical definition, 1-2 sentences |
-| 4 | `Pros` | Advantages compared to alternatives |
-| 5 | `Cons` | Disadvantages compared to alternatives |
-| 6 | `Keywords` | 3-5 essential keywords |
-| 7 | `Misconception` | Common misconception (empty if none) |
-| 8 | `Real Example` | Real-world usage with specific system names |
-| 9 | `Follow Up` | 1-2 follow-up questions with brief answers |
-
-**Card Template — Front:**
-- INTERVIEW badge + Question — large, centered.
-
-**Card Template — Back (top to bottom):**
-1. Question echo (small, muted)
-2. Interview Answer (largest, most prominent)
-3. Keywords checklist
-4. Key Concept
-5. Misconception (conditional: hidden if empty)
-6. Pros
-7. Cons
-8. Real Example (conditional: hidden if empty)
-9. Follow Up (conditional: hidden if empty)
-
-Each section must display a visible header/title so the user can identify each section at a glance. Sections must be visually separated from each other (e.g. spacing, borders, or background color differences) so they don't blend together.
-
-**Styling:**
-- Dark theme (GitHub Dark / VS Code Dark+ style)
-- WCAG AA+ contrast
-- Color coding: Pros (green), Cons (red), Misconception (orange/amber), Follow Up (gold), Real Example (teal/cyan)
-- Korean readability: `word-break: keep-all`, `line-height: 1.6+`, `white-space: pre-line`
-- Fonts: Pretendard / Noto Sans KR for Korean; JetBrains Mono / Fira Code for code
-- Code blocks: distinct background, monospace, `overflow-x: auto`
-
-**Styling is NOT fully specified here.** The agent creating the note type should design clean, readable card styling with good visual hierarchy at its own discretion, as long as the constraints above are satisfied.
-
-## A3b. Create Note Type "Vocabulary"
-
-Create via `createModel` with the specification below. Used by `/anki:voca`.
-
-**Fields (12, in order):**
-
-| # | Field | Description |
-|---|---|---|
-| 1 | `Sentence` | Natural sentence with blank (`<b>__________</b>`) |
-| 2 | `TargetWord` | The word being learned |
-| 3 | `POS` | Part of speech |
-| 4 | `Pronunciation` | IPA transcription |
-| 5 | `KoreanMeaning` | Korean translation |
-| 6 | `EnglishDefinition` | Monolingual English definition |
-| 7 | `Confusable` | Commonly confused word (empty if none) |
-| 8 | `Collocations` | 2-3 common collocations |
-| 9 | `WordFamily` | Related word forms (empty if none) |
-| 10 | `Examples` | 3 example sentences |
-| 11 | `Audio` | Word pronunciation audio (left empty at creation) |
-| 12 | `SentenceAudio` | Full sentence audio (left empty at creation) |
-
-**Card Template — Front:**
-- Sentence with blank
-- EnglishDefinition — always visible (NOT click-to-reveal). Must be displayed directly below the sentence at all times.
-
-**Card Template — Back (top to bottom):**
-1. TargetWord
-2. POS + Pronunciation
-3. Audio (word)
-4. KoreanMeaning
-5. **── divider ──** (must be clearly visible, not subtle)
-6. Filled sentence (blank replaced with TargetWord, highlighted) — requires JS to replace `<b>__________</b>` with `<b class="filled">{{text:TargetWord}}</b>`
-7. SentenceAudio
-8. **── divider ──** (must be clearly visible, not subtle)
-9. Confusable — with section header label. Conditional: only shown if field is not empty.
-10. Collocations — with section header label.
-11. WordFamily — with section header label. Conditional: only shown if field is not empty.
-12. Examples — with section header label.
-
-Each section (9–12) must display a visible header/title so the user can identify each section at a glance. Sections must be visually separated from each other.
-
-**Styling is NOT fully specified here.** The agent creating the note type should design clean, readable card styling with good visual hierarchy at its own discretion. Key constraint: text must have sufficient contrast against the background.
-
-## A3c. Create Note Type "StudyCard"
-
-Create via `createModel` with the specification below. Used by `/anki:deck` and custom deck commands created via `/anki:deck`.
-
-**Fields (7, in order):**
-
-| # | Field | Description |
-|---|---|---|
-| 1 | `Question` | The question text |
-| 2 | `Choices` | MC choices (empty for subjective mode) |
-| 3 | `Answer` | Subjective answer (empty for MC mode) |
-| 4 | `CorrectChoice` | Correct MC choice (empty for subjective mode) |
-| 5 | `Explanation` | Deeper elaboration |
-| 6 | `Hint` | Click-to-reveal retrieval cue (optional) |
-| 7 | `Misconception` | Common misconception (optional) |
-
-**Card Template — Front:**
-
-The front template MUST handle both modes using Anki's conditional syntax `{{#FieldName}}...{{/FieldName}}`.
-
-1. **Question** — always displayed, large and centered.
-2. **Choices block** — conditional: `{{#Choices}}...{{/Choices}}`
-   - Shown ONLY when `Choices` field is not empty (MC mode).
-   - Each choice on its own line, clearly numbered with circled numbers.
-   - Hidden automatically in subjective mode because the field is empty.
-3. **Hint** — conditional: `{{#Hint}}...{{/Hint}}`
-   - Click-to-reveal retrieval cue using Anki's native `{{hint:Hint}}` syntax.
-   - Renders as a clickable "Show Hint" button. When clicked, reveals the hint text.
-   - Hidden automatically if the Hint field is empty.
-
-**Card Template — Back (top to bottom):**
-
-The back template MUST handle both modes using conditional blocks.
-
-1. Question echo (small, muted)
-2. Answer block — conditional: `{{#Answer}}...{{/Answer}}` (subjective only, most prominent)
-3. CorrectChoice block — conditional: `{{#CorrectChoice}}...{{/CorrectChoice}}` (MC only, highlighted)
-4. Explanation (always shown)
-5. Misconception block — conditional: `{{#Misconception}}...{{/Misconception}}` (orange/amber)
-
-Each section must display a visible header/title. Sections must be visually separated.
-
-**Styling constraints:**
-- Dark theme, WCAG AA+ contrast, card max-width centered
-- Visual hierarchy: Question > Answer/CorrectChoice > Choices/Explanation > Misconception > Section titles
-- Font weight: Question bold, Answer medium, section titles bold/uppercase
-- Color coding: Answer (blue/cyan), CorrectChoice (green), Explanation (neutral), Misconception (orange/amber)
-- Korean readability: `word-break: keep-all`, `line-height: 1.6+`, `white-space: pre-line`
-- Korean sans-serif font with `@import`, monospace for code
-- Code blocks: distinct background, rounded corners, `overflow-x: auto`
-- Mobile responsive: reduced padding <480px, full-width tappable choices (44px min height)
-
-**Styling is NOT fully specified here.** The agent creating the note type has full creative freedom to design the visual appearance as long as all listed constraints are satisfied.
-
-## A4. Field Mismatch Warning
-
-When a note type already exists but its fields do not match the expected schema, warn the user:
-
-**Expected fields per note type:**
-
-| Note Type | Count | Expected Fields |
-|---|---|---|
-| Concept | 9 | Question, Interview Answer, Key Concept, Pros, Cons, Keywords, Misconception, Real Example, Follow Up |
-| Vocabulary | 12 | Sentence, TargetWord, POS, Pronunciation, KoreanMeaning, EnglishDefinition, Confusable, Collocations, WordFamily, Examples, Audio, SentenceAudio |
-| StudyCard | 7 | Question, Choices, Answer, CorrectChoice, Explanation, Hint, Misconception |
-
-Display the warning:
-
-> **⚠️ "{NoteType}" 노트 타입의 필드가 예상과 다릅니다.**
->
-> - 예상 필드: {expected fields}
-> - 실제 필드: {actual fields}
->
-> Anki에서 해당 노트 타입을 삭제한 뒤 `/anki:set-up`을 다시 실행하면 올바른 구조로 재생성합니다.
-> (주의: 삭제하면 해당 노트 타입의 기존 카드도 삭제됩니다.)
-
-Do NOT auto-delete or auto-modify existing note types. Continue to the next step.
-
-## A5. Install edge-tts
+## A2. Install edge-tts
 
 Required for `/anki:voca` audio generation.
 
@@ -308,11 +101,11 @@ python3 -m edge_tts --help 2>/dev/null && echo "INSTALLED" || echo "NOT_INSTALLE
 >
 > 설치 완료 후 `/anki:voca`를 사용하면 오디오가 정상적으로 생성됩니다.
 
-Mark as ❌ in the A6 summary and continue. Do NOT stop — the rest of the setup is still valid.
+Mark as ❌ in the A3 summary and continue. Do NOT stop — the rest of the setup is still valid.
 
 **If already installed:** Mark as ✅ and continue.
 
-## A6. Report
+## A3. Report
 
 Show a setup summary and optimal study settings.
 
@@ -325,15 +118,6 @@ Show a setup summary and optimal study settings.
 │  MCP 서버          ✅ / ❌                            │
 │  AnkiConnect       ✅ / ❌                            │
 │  edge-tts          ✅ / ❌                            │
-├─────────────────────────────────────────────────────┤
-│  덱 (Decks)                                          │
-│    Computer Science   ✅ 생성됨 / 이미 존재            │
-│    Vocabulary         ✅ 생성됨 / 이미 존재            │
-├─────────────────────────────────────────────────────┤
-│  노트 타입 (Note Types)                               │
-│    Concept (9 fields)    ✅ 생성됨 / 확인됨 / ⚠️      │
-│    Vocabulary (12 fields) ✅ 생성됨 / 확인됨 / ⚠️     │
-│    StudyCard (7 fields)  ✅ 생성됨 / 확인됨 / ⚠️      │
 └─────────────────────────────────────────────────────┘
 ```
 
