@@ -422,6 +422,10 @@ findNotes → query: "\"deck:{{DECK_NAME}}\" Question:*{topic}*"
 
 **NOTE:** Anki search syntax requires quotes (not backslash escaping) for deck names with spaces. e.g. Use `"deck:My Deck"`, NOT `deck:My\ Deck`.
 
+## Formatting Rule
+
+- **Line breaks: Anki renders HTML, so use `<br>` for all line breaks. Never use `\n` — it renders as invisible whitespace, not a visible line break.**
+
 ## A6-S. Create Subjective Note
 
 ```

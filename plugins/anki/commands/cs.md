@@ -140,6 +140,8 @@ addNotes → deckName: "Computer Science", modelName: "Concept",
            allowDuplicate: false, duplicateScope: "deck"
 ```
 
+- **Line breaks: Anki renders HTML, so use `<br>` for all line breaks. Never use `\n` — it renders as invisible whitespace, not a visible line break.**
+
 ### Tagging
 
 - Always include `cs` as base tag.

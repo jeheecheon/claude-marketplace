@@ -143,6 +143,7 @@ addNotes → deckName: "Vocabulary", modelName: "Vocabulary",
 - Fill all fields EXCEPT Audio, SentenceAudio (leave empty).
 - Tags: `voca` + headword (lowercase, hyphenated if multi-word).
 - Save returned note ID for A6.
+- **Line breaks: Anki renders HTML, so use `<br>` for all line breaks. Never use `\n` — it renders as invisible whitespace, not a visible line break.**
 
 ### Quality guidelines for field content
 
