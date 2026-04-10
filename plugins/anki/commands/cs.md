@@ -158,6 +158,7 @@ addNotes → deckName: "Computer Science", modelName: "Concept",
 - 3-5 sentences max. If it needs more, the question scope is too broad — split it.
 - Must be self-contained: understandable without reading other fields.
 - For algorithm topics: naturally weave in the core idea, when to apply, and complexity.
+- **Spoken form only.** The answer is read aloud in interviews. Never inline code literals (`disabled={true}`), identifiers (`xScale`, `null`), or raw symbols (`(0,0)`, `Cmd+Tab`) — translate to spoken Korean ("비활성화 속성", "축 스케일", "화면 좌상단"). Code-level details go in `Real Example` or `Key Concept` only.
 
 **Question:**
 - Must sound like a real interviewer asking — natural, professional Korean.
