@@ -52,8 +52,10 @@ START
 The **`anki`** MCP server is not installed. Run the following via Bash tool:
 
 ```bash
-claude mcp add anki -- npx -y @alexanderadam/mcp-ankiconnect
+claude mcp add anki -- npx -y @ankimcp/anki-mcp-server --stdio
 ```
+
+Note: The `--stdio` flag is required so the server speaks Claude Code's stdio MCP transport.
 
 Then tell the user: **"Please type `/reload-plugins` to activate the MCP, then retry."** **STOP — cannot proceed until MCP is loaded.**
 
