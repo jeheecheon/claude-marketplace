@@ -16,6 +16,11 @@
       "name": "git",
       "source": "./plugins/git",
       "description": "Git workflow utilities"
+    },
+    {
+      "name": "misc",
+      "source": "./plugins/misc",
+      "description": "Miscellaneous utility commands"
     }
   ]
 }
